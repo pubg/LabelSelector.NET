@@ -2,12 +2,13 @@
 
 namespace LabelSelector
 {
-    public struct TokenConsumer
+    public class TokenConsumer
     {
         private readonly Token[] _tokens;
         private int _index;
 
-        public bool HasNext => _tokens.Length - 1 > _index;
+        public bool HasNextToken => _tokens.Length - 1 > _index;
+        public bool HasToken => _tokens.Length > _index;
 
         public TokenConsumer(Token[] tokens)
         {

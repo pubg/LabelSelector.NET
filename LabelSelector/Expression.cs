@@ -66,10 +66,10 @@ namespace LabelSelector
         }
     }
 
-    public class KeyExpression : IExpression
+    public class ExistsExpression : IExpression
     {
         public readonly ValueToken Key;
-        public KeyExpression(ValueToken key)
+        public ExistsExpression(ValueToken key)
         {
             Key = key;
         }
@@ -85,22 +85,22 @@ namespace LabelSelector
         }
     }
 
-    public class NotExpression : IExpression
+    public class NotExistsExpression : IExpression
     {
-        public readonly IExpression InnerExpression;
-        public NotExpression(IExpression innerExpression)
+        public readonly ValueToken Key;
+        public NotExistsExpression(ValueToken key)
         {
-            InnerExpression = innerExpression;
+            Key = key;
         }
 
         public override string ToString()
         {
-            return $"[Not] !{InnerExpression}";
+            return $"[NotExists] !{Key}";
         }
 
         public bool Test(IReadOnlyDictionary<ReadOnlyMemory<char>, ReadOnlyMemory<char>> labels)
         {
-            return !InnerExpression.Test(labels);
+            return labels.Keys.All(labelKey => !labelKey.Span.Equals(Key.Value.Span, StringComparison.Ordinal));
         }
     }
 }

@@ -15,12 +15,8 @@ namespace LabelSelector
             (TokenType.OpenParentheses, "("),
             (TokenType.CloseParentheses, ")"),
             (TokenType.Comma, ","),
-            (TokenType.AmpersandAmpersand, "&&"),
-            (TokenType.VerticalBarVerticalBar, "||"),
             (TokenType.EqualEqual, "=="),
             (TokenType.ExclamationEqual, "!="),
-            (TokenType.OpenSquareBracket, "["),
-            (TokenType.CloseSquareBracket, "]"),
             (TokenType.Exclamation, "!"),
         };
 

@@ -6,75 +6,72 @@ namespace LabelSelector
 {
     public static class Parser
     {
-        public static IExpression Parse(string labelSelector)
+        public static IEnumerable<IExpression> Parse(string labelSelector)
         {
             var tokens = Tokenizer.Tokenize(labelSelector).ToArray();
             return Parse(tokens);
         }
-        public static IExpression Parse(Token[] tokens)
+        public static IEnumerable<IExpression> Parse(Token[] tokens)
         {
             var tokenConsumer = new TokenConsumer(tokens);
             return Parse(tokenConsumer);
         }
-        private static IExpression Parse(TokenConsumer tokenConsumer)
+        private static IEnumerable<IExpression> Parse(TokenConsumer tokenConsumer)
         {
-            var firstToken = tokenConsumer.PeekToken();
-
-            switch (firstToken.TokenType)
+            while (tokenConsumer.HasToken)
             {
-                case TokenType.Value:
-                    return ParseInFirstValueState(tokenConsumer);
-                //case TokenType.OpenParentheses:
-                //    break;
-                //case TokenType.AmpersandAmpersand:
-                //    break;
-                //case TokenType.VerticalBarVerticalBar:
-                //    break;
-                case TokenType.Exclamation:
-                    tokenConsumer.EatToken(TokenType.Exclamation);
-                    return new NotExpression(Parse(tokenConsumer));
-                default:
-                    throw new Exception($"Not expected token {firstToken.TokenType}");
+                var firstToken = tokenConsumer.PeekToken();
+
+                switch (firstToken.TokenType)
+                {
+                    case TokenType.Value:
+                        yield return ParseInFirstValueState(tokenConsumer);
+                        break;
+                    case TokenType.Exclamation:
+                        yield return ParseNotExistsExpression(tokenConsumer);
+                        break;
+                    case TokenType.Comma:
+                        tokenConsumer.EatToken(TokenType.Comma);
+                        break;
+                    default:
+                        throw new Exception($"Not expected token {firstToken.TokenType}");
+                }
             }
         }
 
-        public static IExpression ParseInFirstValueState(TokenConsumer tokenConsumer)
+        private static IExpression ParseNotExistsExpression(TokenConsumer tokenConsumer)
+        {
+            tokenConsumer.EatToken(TokenType.Exclamation);
+            var valueToken = tokenConsumer.EatToken<ValueToken>();
+            return new NotExistsExpression(valueToken);
+        }
+
+        private static IExpression ParseInFirstValueState(TokenConsumer tokenConsumer)
         {
             var valueToken = tokenConsumer.EatToken<ValueToken>();
 
-            if (!tokenConsumer.HasNext)
+            if (!tokenConsumer.HasNextToken)
             {
-                return new KeyExpression(valueToken);
+                return new ExistsExpression(valueToken);
             }
 
             var secondToken = tokenConsumer.PeekToken();
 
             switch (secondToken.TokenType)
             {
-                //case TokenType.Value:
-                //    break;
-                //case TokenType.OpenParentheses:
-                //    break;
-                //case TokenType.CloseParentheses:
-                //    break;
-                //case TokenType.AmpersandAmpersand:
-                //    break;
-                //case TokenType.VerticalBarVerticalBar:
-                //    break;
-                //case TokenType.EqualEqual:
-                //    break;
-                //case TokenType.ExclamationEqual:
-                //    break;
                 case TokenType.In:
                     return ParseInExpression(tokenConsumer, valueToken);
                 case TokenType.Notin:
                     return ParseNotinExpression(tokenConsumer, valueToken);
+                case TokenType.Comma:
+                    tokenConsumer.EatToken(TokenType.Comma);
+                    return new ExistsExpression(valueToken);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        public static InExpression ParseInExpression(TokenConsumer tokenConsumer, ValueToken valueToken)
+        private static InExpression ParseInExpression(TokenConsumer tokenConsumer, ValueToken valueToken)
         {
             tokenConsumer.EatToken(TokenType.In);
 
@@ -82,7 +79,7 @@ namespace LabelSelector
 
             return new InExpression(valueToken, arraySyntax);
         }
-        public static NotinExpression ParseNotinExpression(TokenConsumer tokenConsumer, ValueToken valueToken)
+        private static NotinExpression ParseNotinExpression(TokenConsumer tokenConsumer, ValueToken valueToken)
         {
             tokenConsumer.EatToken(TokenType.Notin);
 
@@ -91,7 +88,7 @@ namespace LabelSelector
             return new NotinExpression(valueToken, arraySyntax);
         }
 
-        public static ArraySyntax ParseArraySyntax(TokenConsumer tokenConsumer)
+        private static ArraySyntax ParseArraySyntax(TokenConsumer tokenConsumer)
         {
             tokenConsumer.EatToken(TokenType.OpenParentheses);
 

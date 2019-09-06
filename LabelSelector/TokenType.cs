@@ -3,17 +3,13 @@
     public enum TokenType
     {
         Unknown,
-        Value, // This Special.
+        Value, // else
         OpenParentheses, // (
         CloseParentheses, // )
-        AmpersandAmpersand, // &&
-        VerticalBarVerticalBar, // ||
         EqualEqual, // ==
         ExclamationEqual, // !=
         In, // in
         Notin, // notin
-        OpenSquareBracket,// [
-        CloseSquareBracket,// ]
         Exclamation, // !
         Comma // ,
     }

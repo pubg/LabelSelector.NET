@@ -10,14 +10,10 @@ namespace LabelSelector
             [typeof(ValueToken)] = TokenType.Value,
             [typeof(OpenParenthesesToken)] = TokenType.OpenParentheses,
             [typeof(CloseParenthesesToken)] = TokenType.CloseParentheses,
-            [typeof(AmpersandAmpersandToken)] = TokenType.AmpersandAmpersand,
-            [typeof(VerticalBarVerticalBarToken)] = TokenType.VerticalBarVerticalBar,
             [typeof(EqualEqualToken)] = TokenType.EqualEqual,
             [typeof(ExclamationEqualToken)] = TokenType.ExclamationEqual,
             [typeof(InToken)] = TokenType.In,
             [typeof(NotinToken)] = TokenType.Notin,
-            [typeof(OpenSquareBracketToken)] = TokenType.OpenSquareBracket,
-            [typeof(CloseSquareBracketToken)] = TokenType.CloseSquareBracket,
             [typeof(ExclamationToken)] = TokenType.Exclamation,
             [typeof(CommaToken)] = TokenType.Comma,
         };
@@ -40,10 +36,6 @@ namespace LabelSelector
                     return new OpenParenthesesToken(value);
                 case TokenType.CloseParentheses:
                     return new CloseParenthesesToken(value);
-                case TokenType.AmpersandAmpersand:
-                    return new AmpersandAmpersandToken(value);
-                case TokenType.VerticalBarVerticalBar:
-                    return new VerticalBarVerticalBarToken(value);
                 case TokenType.EqualEqual:
                     return new EqualEqualToken(value);
                 case TokenType.ExclamationEqual:
@@ -52,10 +44,6 @@ namespace LabelSelector
                     return new InToken(value);
                 case TokenType.Notin:
                     return new NotinToken(value);
-                case TokenType.OpenSquareBracket:
-                    return new OpenSquareBracketToken(value);
-                case TokenType.CloseSquareBracket:
-                    return new CloseSquareBracketToken(value);
                 case TokenType.Exclamation:
                     return new ExclamationToken(value);
                 case TokenType.Comma:
@@ -87,18 +75,6 @@ namespace LabelSelector
         {
         }
     }
-    public class AmpersandAmpersandToken : Token
-    {
-        public AmpersandAmpersandToken(ReadOnlyMemory<char> value) : base(TokenType.AmpersandAmpersand, value)
-        {
-        }
-    }
-    public class VerticalBarVerticalBarToken : Token
-    {
-        public VerticalBarVerticalBarToken(ReadOnlyMemory<char> value) : base(TokenType.VerticalBarVerticalBar, value)
-        {
-        }
-    }
     public class EqualEqualToken : Token
     {
         public EqualEqualToken(ReadOnlyMemory<char> value) : base(TokenType.EqualEqual, value)
@@ -120,18 +96,6 @@ namespace LabelSelector
     public class NotinToken : Token
     {
         public NotinToken(ReadOnlyMemory<char> value) : base(TokenType.Notin, value)
-        {
-        }
-    }
-    public class OpenSquareBracketToken : Token
-    {
-        public OpenSquareBracketToken(ReadOnlyMemory<char> value) : base(TokenType.OpenSquareBracket, value)
-        {
-        }
-    }
-    public class CloseSquareBracketToken : Token
-    {
-        public CloseSquareBracketToken(ReadOnlyMemory<char> value) : base(TokenType.CloseSquareBracket, value)
         {
         }
     }

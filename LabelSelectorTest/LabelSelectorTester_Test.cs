@@ -166,12 +166,8 @@ namespace LabelSelectorTest
             {
             };
 
-            foreach (var randomValue in randomValues)
-            {
-
-                var result = LabelSelectorTester.Test(labels, labelSelector);
-                Assert.IsTrue(result);
-            }
+            var result = LabelSelectorTester.Test(labels, labelSelector);
+            Assert.IsTrue(result);
         }
 
         [TestMethod]
@@ -203,13 +199,60 @@ namespace LabelSelectorTest
         }
 
         [TestMethod]
-        public void TestNotExpression_Exists()
+        public void TestNotExistsExpression_Exists()
         {
             var labelSelector = $"!environment";
 
             var labels = new Dictionary<string, string>
             {
                 [GenerateRandomString()] = GenerateRandomString(),
+            };
+
+            var result = LabelSelectorTester.Test(labels, labelSelector);
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void TestComma_False()
+        {
+            const int n = 10;
+
+            var randomValues = new List<string>();
+
+            for (var i = 0; i < n; i += 1)
+            {
+                var randomString = GenerateRandomString();
+                randomValues.Add(randomString);
+            }
+
+            var labelSelector = $"environment, environment notin ({string.Join(", ", randomValues)})";
+
+            var labels = new Dictionary<string, string>
+            {
+            };
+
+            var result = LabelSelectorTester.Test(labels, labelSelector);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void TestComma_TwoExpression()
+        {
+            const int n = 10;
+
+            var randomValues = new List<string>();
+
+            for (var i = 0; i < n; i += 1)
+            {
+                var randomString = GenerateRandomString();
+                randomValues.Add(randomString);
+            }
+
+            var labelSelector = $"environment, environment notin ({string.Join(", ", randomValues)})";
+
+            var labels = new Dictionary<string, string>
+            {
+                ["environment"] = GenerateRandomString(),
             };
 
             var result = LabelSelectorTester.Test(labels, labelSelector);
