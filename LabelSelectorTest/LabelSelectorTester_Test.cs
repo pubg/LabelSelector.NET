@@ -175,7 +175,7 @@ namespace LabelSelectorTest
         }
 
         [TestMethod]
-        public void TestKeyExpression()
+        public void TestExistsExpression()
         {
             var labelSelector = $"environment";
 
@@ -189,7 +189,7 @@ namespace LabelSelectorTest
         }
 
         [TestMethod]
-        public void TestKeyExpression_False()
+        public void TestExistsExpression_False()
         {
             var labelSelector = $"environment";
 
@@ -203,7 +203,7 @@ namespace LabelSelectorTest
         }
 
         [TestMethod]
-        public void TestNotExpression_Key()
+        public void TestNotExpression_Exists()
         {
             var labelSelector = $"!environment";
 
