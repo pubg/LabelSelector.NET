@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LabelSelector
 {
     public static class Parser
     {
-        public static Expression Parse(Token[] tokens)
+        public static IExpression Parse(string labelSelector)
+        {
+            var tokens = Tokenizer.Tokenize(labelSelector).ToArray();
+            return Parse(tokens);
+        }
+        public static IExpression Parse(Token[] tokens)
         {
             var tokenConsumer = new TokenConsumer(tokens);
             return Parse(tokenConsumer);
         }
-        private static Expression Parse(TokenConsumer tokenConsumer)
+        private static IExpression Parse(TokenConsumer tokenConsumer)
         {
             var firstToken = tokenConsumer.PeekToken();
 
@@ -32,7 +38,7 @@ namespace LabelSelector
             }
         }
 
-        public static Expression ParseInFirstValueState(TokenConsumer tokenConsumer)
+        public static IExpression ParseInFirstValueState(TokenConsumer tokenConsumer)
         {
             var valueToken = tokenConsumer.EatToken<ValueToken>();
 

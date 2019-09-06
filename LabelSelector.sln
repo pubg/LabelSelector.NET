@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabelSelector", "LabelSelector.csproj", "{B2E46403-1961-4B9A-8E10-4E0C84EFC56C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LabelSelector", "LabelSelector\LabelSelector.csproj", "{9C0BCB7E-CCBB-493E-98CC-29373BD0B3A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabelSelectorTest", "LabelSelectorTest\LabelSelectorTest.csproj", "{E6817DA2-DD09-4C8C-A88F-5F627C20BA52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B2E46403-1961-4B9A-8E10-4E0C84EFC56C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B2E46403-1961-4B9A-8E10-4E0C84EFC56C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B2E46403-1961-4B9A-8E10-4E0C84EFC56C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B2E46403-1961-4B9A-8E10-4E0C84EFC56C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C0BCB7E-CCBB-493E-98CC-29373BD0B3A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C0BCB7E-CCBB-493E-98CC-29373BD0B3A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C0BCB7E-CCBB-493E-98CC-29373BD0B3A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C0BCB7E-CCBB-493E-98CC-29373BD0B3A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6817DA2-DD09-4C8C-A88F-5F627C20BA52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6817DA2-DD09-4C8C-A88F-5F627C20BA52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6817DA2-DD09-4C8C-A88F-5F627C20BA52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6817DA2-DD09-4C8C-A88F-5F627C20BA52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

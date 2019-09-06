@@ -25,7 +25,7 @@ namespace LabelSelector
         };
 
 
-        public static IEnumerable<ReadOnlyMemory<char>> SplitByWhitespace(ReadOnlyMemory<char> text)
+        private static IEnumerable<ReadOnlyMemory<char>> SplitByWhitespace(ReadOnlyMemory<char> text)
         {
             int head = 0;
             for (var i = 0; i < text.Length; i += 1)
