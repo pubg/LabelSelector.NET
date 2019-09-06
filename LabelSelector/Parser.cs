@@ -43,7 +43,7 @@ namespace LabelSelector
         {
             tokenConsumer.EatToken(TokenType.Exclamation);
             var valueToken = tokenConsumer.EatToken<ValueToken>();
-            return new NotExistsExpression(valueToken);
+            return new NotExistsExpression(valueToken.Value);
         }
 
         private static IExpression ParseInFirstValueState(TokenConsumer tokenConsumer)
@@ -52,7 +52,7 @@ namespace LabelSelector
 
             if (!tokenConsumer.HasNextToken)
             {
-                return new ExistsExpression(valueToken);
+                return new ExistsExpression(valueToken.Value);
             }
 
             var secondToken = tokenConsumer.PeekToken();
@@ -65,7 +65,7 @@ namespace LabelSelector
                     return ParseNotInExpression(tokenConsumer, valueToken);
                 case TokenType.Comma:
                     tokenConsumer.EatToken(TokenType.Comma);
-                    return new ExistsExpression(valueToken);
+                    return new ExistsExpression(valueToken.Value);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -77,7 +77,9 @@ namespace LabelSelector
 
             var arraySyntax = ParseArraySyntax(tokenConsumer);
 
-            return new InExpression(valueToken, arraySyntax);
+            return new InExpression(
+                valueToken.Value,
+                arraySyntax.Values.Select(value => value.Value));
         }
         private static NotInExpression ParseNotInExpression(TokenConsumer tokenConsumer, ValueToken valueToken)
         {
@@ -85,7 +87,9 @@ namespace LabelSelector
 
             var arraySyntax = ParseArraySyntax(tokenConsumer);
 
-            return new NotInExpression(valueToken, arraySyntax);
+            return new NotInExpression(
+                valueToken.Value,
+                arraySyntax.Values.Select(value => value.Value));
         }
 
         private static ArraySyntax ParseArraySyntax(TokenConsumer tokenConsumer)

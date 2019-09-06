@@ -11,84 +11,87 @@ namespace LabelSelector
 
     public class InExpression : IExpression
     {
-        public readonly ValueToken Key;
-        public readonly ArraySyntax Array;
+        public readonly ReadOnlyMemory<char> Key;
+        public readonly IEnumerable<ReadOnlyMemory<char>> Values;
 
-        public InExpression(ValueToken key, ArraySyntax array)
+        public InExpression(ReadOnlyMemory<char> key, IEnumerable<ReadOnlyMemory<char>> values)
         {
             Key = key;
-            Array = array;
+            Values = values;
         }
 
         public override string ToString()
         {
-            return $"[In] {Key.Value} in {Array}";
+            return $"{Key} in {string.Join(", ", Values)}";
         }
 
         public bool Test(IReadOnlyDictionary<ReadOnlyMemory<char>, ReadOnlyMemory<char>> labels)
         {
-            var key = labels.Keys.FirstOrDefault(labelKey => labelKey.Span.Equals(Key.Value.Span, StringComparison.Ordinal));
+            var key = labels.Keys.FirstOrDefault(labelKey => labelKey.Span.Equals(Key.Span, StringComparison.Ordinal));
 
             if (!labels.TryGetValue(key, out var value))
             {
                 return false;
             }
 
-            return Array.Values.Any(arrayItem => value.Span.Equals(arrayItem.Value.Span, StringComparison.Ordinal));
+            return Values.Any(arrayItem => value.Span.Equals(arrayItem.Span, StringComparison.Ordinal));
         }
     }
     public class NotInExpression : IExpression
     {
-        public readonly ValueToken Key;
-        public readonly ArraySyntax Array;
+        public readonly ReadOnlyMemory<char> Key;
+        public readonly IEnumerable<ReadOnlyMemory<char>> Values;
 
-        public NotInExpression(ValueToken key, ArraySyntax array)
+        public NotInExpression(ReadOnlyMemory<char> key, IEnumerable<ReadOnlyMemory<char>> values)
         {
             Key = key;
-            Array = array;
+            Values = values;
         }
 
         public override string ToString()
         {
-            return $"[NotIn] {Key.Value} notIn {Array}";
+            return $"[NotIn] {Key} notIn {string.Join(", ", Values)}";
         }
 
         public bool Test(IReadOnlyDictionary<ReadOnlyMemory<char>, ReadOnlyMemory<char>> labels)
         {
-            var key = labels.Keys.FirstOrDefault(labelKey => labelKey.Span.Equals(Key.Value.Span, StringComparison.Ordinal));
+            var key = labels.Keys
+                .FirstOrDefault(labelKey => labelKey.Span.Equals(Key.Span, StringComparison.Ordinal));
 
             if (!labels.TryGetValue(key, out var value))
             {
                 return true;
             }
 
-            return Array.Values.All(arrayItem => !value.Span.Equals(arrayItem.Value.Span, StringComparison.Ordinal));
+            return Values
+                .All(arrayItem => !value.Span.Equals(arrayItem.Span, StringComparison.Ordinal));
         }
     }
 
     public class ExistsExpression : IExpression
     {
-        public readonly ValueToken Key;
-        public ExistsExpression(ValueToken key)
+        public readonly ReadOnlyMemory<char> Key;
+        public ExistsExpression(ReadOnlyMemory<char> key)
         {
             Key = key;
         }
 
         public override string ToString()
         {
-            return $"[Key] {Key.Value}";
+            return $"[Key] {Key}";
         }
 
         public bool Test(IReadOnlyDictionary<ReadOnlyMemory<char>, ReadOnlyMemory<char>> labels)
         {
-            return labels.Keys.Any(labelKey => labelKey.Span.Equals(Key.Value.Span, StringComparison.Ordinal));
+            return labels.Keys
+                .Any(labelKey => labelKey.Span.Equals(Key.Span, StringComparison.Ordinal));
         }
     }
 
     public class NotExistsExpression : IExpression
     {
-        public readonly ValueToken Key;
-        public NotExistsExpression(ValueToken key)
+        public readonly ReadOnlyMemory<char> Key;
+        public NotExistsExpression(ReadOnlyMemory<char> key)
         {
             Key = key;
         }
@@ -100,7 +103,8 @@ namespace LabelSelector
 
         public bool Test(IReadOnlyDictionary<ReadOnlyMemory<char>, ReadOnlyMemory<char>> labels)
         {
-            return labels.Keys.All(labelKey => !labelKey.Span.Equals(Key.Value.Span, StringComparison.Ordinal));
+            return labels.Keys
+                .All(labelKey => !labelKey.Span.Equals(Key.Span, StringComparison.Ordinal));
         }
     }
 }

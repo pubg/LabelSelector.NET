@@ -37,7 +37,7 @@ namespace LabelSelectorTest
             Assert.IsTrue(result);
         }
 
-        private static string GenerateRandomString() => Guid.NewGuid().ToString().Substring(0, 6);
+        internal static string GenerateRandomString() => Guid.NewGuid().ToString().Substring(0, 6);
 
         [TestMethod]
         public void TestInExpression()
