@@ -94,7 +94,7 @@ namespace LabelSelectorTest
         }
 
         [TestMethod]
-        public void TestNotinExpression_False()
+        public void TestNotInExpression_False()
         {
             const int n = 10;
 
@@ -121,7 +121,7 @@ namespace LabelSelectorTest
         }
 
         [TestMethod]
-        public void TestNotinExpression()
+        public void TestNotInExpression()
         {
             const int n = 10;
 
@@ -148,7 +148,7 @@ namespace LabelSelectorTest
         }
 
         [TestMethod]
-        public void TestNotinExpression_NoKey()
+        public void TestNotInExpression_NoKey()
         {
             const int n = 10;
 
@@ -225,7 +225,7 @@ namespace LabelSelectorTest
                 randomValues.Add(randomString);
             }
 
-            var labelSelector = $"environment, environment notin ({string.Join(", ", randomValues)})";
+            var labelSelector = $"environment, environment notIn ({string.Join(", ", randomValues)})";
 
             var labels = new Dictionary<string, string>
             {

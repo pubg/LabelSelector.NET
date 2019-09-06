@@ -6,12 +6,12 @@ namespace LabelSelector
 {
     public static class Tokenizer
     {
-        private static readonly (TokenType tokenType, string matchString)[] MonopolyTokenDefinitions = new (TokenType tokenType, string matchString)[] {
+        private static readonly (TokenType tokenType, string matchString)[] MonopolyTokenDefinitions = {
             (TokenType.In, "in"),
-            (TokenType.Notin, "notin"),
+            (TokenType.NotIn, "notin"),
         };
 
-        private static readonly (TokenType tokenType, string matchString)[] CoexistTokenDefinitions = new (TokenType tokenType, string matchString)[] {
+        private static readonly (TokenType tokenType, string matchString)[] CoexistTokenDefinitions = {
             (TokenType.OpenParentheses, "("),
             (TokenType.CloseParentheses, ")"),
             (TokenType.Comma, ","),

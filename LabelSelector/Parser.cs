@@ -61,8 +61,8 @@ namespace LabelSelector
             {
                 case TokenType.In:
                     return ParseInExpression(tokenConsumer, valueToken);
-                case TokenType.Notin:
-                    return ParseNotinExpression(tokenConsumer, valueToken);
+                case TokenType.NotIn:
+                    return ParseNotInExpression(tokenConsumer, valueToken);
                 case TokenType.Comma:
                     tokenConsumer.EatToken(TokenType.Comma);
                     return new ExistsExpression(valueToken);
@@ -79,13 +79,13 @@ namespace LabelSelector
 
             return new InExpression(valueToken, arraySyntax);
         }
-        private static NotinExpression ParseNotinExpression(TokenConsumer tokenConsumer, ValueToken valueToken)
+        private static NotInExpression ParseNotInExpression(TokenConsumer tokenConsumer, ValueToken valueToken)
         {
-            tokenConsumer.EatToken(TokenType.Notin);
+            tokenConsumer.EatToken(TokenType.NotIn);
 
             var arraySyntax = ParseArraySyntax(tokenConsumer);
 
-            return new NotinExpression(valueToken, arraySyntax);
+            return new NotInExpression(valueToken, arraySyntax);
         }
 
         private static ArraySyntax ParseArraySyntax(TokenConsumer tokenConsumer)

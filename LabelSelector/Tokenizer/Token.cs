@@ -13,7 +13,7 @@ namespace LabelSelector
             [typeof(EqualEqualToken)] = TokenType.EqualEqual,
             [typeof(ExclamationEqualToken)] = TokenType.ExclamationEqual,
             [typeof(InToken)] = TokenType.In,
-            [typeof(NotinToken)] = TokenType.Notin,
+            [typeof(NotInToken)] = TokenType.NotIn,
             [typeof(ExclamationToken)] = TokenType.Exclamation,
             [typeof(CommaToken)] = TokenType.Comma,
         };
@@ -42,8 +42,8 @@ namespace LabelSelector
                     return new ExclamationEqualToken(value);
                 case TokenType.In:
                     return new InToken(value);
-                case TokenType.Notin:
-                    return new NotinToken(value);
+                case TokenType.NotIn:
+                    return new NotInToken(value);
                 case TokenType.Exclamation:
                     return new ExclamationToken(value);
                 case TokenType.Comma:
@@ -93,9 +93,9 @@ namespace LabelSelector
         {
         }
     }
-    public class NotinToken : Token
+    public class NotInToken : Token
     {
-        public NotinToken(ReadOnlyMemory<char> value) : base(TokenType.Notin, value)
+        public NotInToken(ReadOnlyMemory<char> value) : base(TokenType.NotIn, value)
         {
         }
     }

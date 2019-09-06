@@ -37,12 +37,12 @@ namespace LabelSelector
             return Array.Values.Any(arrayItem => value.Span.Equals(arrayItem.Value.Span, StringComparison.Ordinal));
         }
     }
-    public class NotinExpression : IExpression
+    public class NotInExpression : IExpression
     {
         public readonly ValueToken Key;
         public readonly ArraySyntax Array;
 
-        public NotinExpression(ValueToken key, ArraySyntax array)
+        public NotInExpression(ValueToken key, ArraySyntax array)
         {
             Key = key;
             Array = array;
@@ -50,7 +50,7 @@ namespace LabelSelector
 
         public override string ToString()
         {
-            return $"[Notin] {Key.Value} notin {Array}";
+            return $"[NotIn] {Key.Value} notIn {Array}";
         }
 
         public bool Test(IReadOnlyDictionary<ReadOnlyMemory<char>, ReadOnlyMemory<char>> labels)

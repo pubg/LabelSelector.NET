@@ -9,7 +9,7 @@
         EqualEqual, // ==
         ExclamationEqual, // !=
         In, // in
-        Notin, // notin
+        NotIn, // notIn
         Exclamation, // !
         Comma // ,
     }
