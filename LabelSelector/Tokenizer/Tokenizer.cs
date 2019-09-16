@@ -15,7 +15,7 @@ namespace LabelSelector
             (TokenType.OpenParentheses, "("),
             (TokenType.CloseParentheses, ")"),
             (TokenType.Comma, ","),
-            (TokenType.EqualEqual, "=="),
+            (TokenType.Equal, "="),
             (TokenType.ExclamationEqual, "!="),
             (TokenType.Exclamation, "!"),
         };
@@ -112,7 +112,7 @@ namespace LabelSelector
 
                 foreach (var token in nextTokens)
                 {
-                    yield return token; 
+                    yield return token;
                 }
 
                 yield break;
@@ -138,7 +138,7 @@ namespace LabelSelector
                 }
                 else
                 {
-                    yield return Token.NewToken(TokenType.Value, chunkedText.Slice(1));
+                    yield return Token.NewToken(TokenType.Value, chunkedText.Slice(0, 1));
 
                     foreach (var token in nextTokens)
                     {

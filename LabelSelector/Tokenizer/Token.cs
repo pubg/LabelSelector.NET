@@ -10,7 +10,7 @@ namespace LabelSelector
             [typeof(ValueToken)] = TokenType.Value,
             [typeof(OpenParenthesesToken)] = TokenType.OpenParentheses,
             [typeof(CloseParenthesesToken)] = TokenType.CloseParentheses,
-            [typeof(EqualEqualToken)] = TokenType.EqualEqual,
+            [typeof(EqualToken)] = TokenType.Equal,
             [typeof(ExclamationEqualToken)] = TokenType.ExclamationEqual,
             [typeof(InToken)] = TokenType.In,
             [typeof(NotInToken)] = TokenType.NotIn,
@@ -36,8 +36,8 @@ namespace LabelSelector
                     return new OpenParenthesesToken(value);
                 case TokenType.CloseParentheses:
                     return new CloseParenthesesToken(value);
-                case TokenType.EqualEqual:
-                    return new EqualEqualToken(value);
+                case TokenType.Equal:
+                    return new EqualToken(value);
                 case TokenType.ExclamationEqual:
                     return new ExclamationEqualToken(value);
                 case TokenType.In:
@@ -75,9 +75,9 @@ namespace LabelSelector
         {
         }
     }
-    public class EqualEqualToken : Token
+    public class EqualToken : Token
     {
-        public EqualEqualToken(ReadOnlyMemory<char> value) : base(TokenType.EqualEqual, value)
+        public EqualToken(ReadOnlyMemory<char> value) : base(TokenType.Equal, value)
         {
         }
     }

@@ -59,6 +59,10 @@ namespace LabelSelector
 
             switch (secondToken.TokenType)
             {
+                case TokenType.Equal:
+                    return ParseEqualExpression(tokenConsumer, valueToken);
+                case TokenType.ExclamationEqual:
+                    return ParseNotEqualExpression(tokenConsumer, valueToken);
                 case TokenType.In:
                     return ParseInExpression(tokenConsumer, valueToken);
                 case TokenType.NotIn:
@@ -71,6 +75,26 @@ namespace LabelSelector
             }
         }
 
+        private static NotEqualExpression ParseNotEqualExpression(TokenConsumer tokenConsumer, ValueToken keyToken)
+        {
+            tokenConsumer.EatToken<ExclamationEqualToken>();
+            var valueToken = tokenConsumer.EatToken<ValueToken>();
+
+            return new NotEqualExpression(
+                keyToken.Value,
+                valueToken.Value);
+        }
+
+        private static EqualExpression ParseEqualExpression(TokenConsumer tokenConsumer, ValueToken keyToken)
+        {
+            tokenConsumer.EatToken<EqualToken>();
+            var valueToken = tokenConsumer.EatToken<ValueToken>();
+
+            return new EqualExpression(
+                keyToken.Value,
+                valueToken.Value);
+        }
+
         private static InExpression ParseInExpression(TokenConsumer tokenConsumer, ValueToken valueToken)
         {
             tokenConsumer.EatToken(TokenType.In);
@@ -81,6 +105,7 @@ namespace LabelSelector
                 valueToken.Value,
                 arraySyntax.Values.Select(value => value.Value));
         }
+
         private static NotInExpression ParseNotInExpression(TokenConsumer tokenConsumer, ValueToken valueToken)
         {
             tokenConsumer.EatToken(TokenType.NotIn);

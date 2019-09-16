@@ -51,7 +51,7 @@ namespace LabelSelectorTest
                 var randomString = GenerateRandomString();
                 randomValues.Add(randomString);
             }
-            
+
             var labelSelector = $"environment in ({string.Join(", ", randomValues)})";
 
             foreach (var randomValue in randomValues)
@@ -257,6 +257,113 @@ namespace LabelSelectorTest
 
             var result = LabelSelectorTester.Test(labels, labelSelector);
             Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void TestEqual_True()
+        {
+            const int n = 10;
+
+            var randomValues = new List<string>();
+
+            for (var i = 0; i < n; i += 1)
+            {
+                var randomString = GenerateRandomString();
+                randomValues.Add(randomString);
+            }
+
+            foreach (var randomValue in randomValues)
+            {
+                var labelSelector = $"environment={randomValue}";
+
+                var labels = new Dictionary<string, string>
+                {
+                    ["environment"] = randomValue,
+                };
+
+                var result = LabelSelectorTester.Test(labels, labelSelector);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public void TestEqual_False()
+        {
+            const int n = 10;
+
+            var randomValues = new List<string>();
+
+            for (var i = 0; i < n; i += 1)
+            {
+                var randomString = GenerateRandomString();
+                randomValues.Add(randomString);
+            }
+
+            foreach (var randomValue in randomValues)
+            {
+                var labelSelector = $"environment={GenerateRandomString()}";
+
+                var labels = new Dictionary<string, string>
+                {
+                    ["environment"] = randomValue,
+                };
+
+                var result = LabelSelectorTester.Test(labels, labelSelector);
+                Assert.IsFalse(result);
+            }
+        }
+
+        public void TestNotEqual_True()
+        {
+            const int n = 10;
+
+            var randomValues = new List<string>();
+
+            for (var i = 0; i < n; i += 1)
+            {
+                var randomString = GenerateRandomString();
+                randomValues.Add(randomString);
+            }
+
+            foreach (var randomValue in randomValues)
+            {
+                var labelSelector = $"environment!={randomValue}";
+
+                var labels = new Dictionary<string, string>
+                {
+                    ["environment"] = randomValue,
+                };
+
+                var result = LabelSelectorTester.Test(labels, labelSelector);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public void TestNotEqual_False()
+        {
+            const int n = 10;
+
+            var randomValues = new List<string>();
+
+            for (var i = 0; i < n; i += 1)
+            {
+                var randomString = GenerateRandomString();
+                randomValues.Add(randomString);
+            }
+
+            foreach (var randomValue in randomValues)
+            {
+                var labelSelector = $"environment!={GenerateRandomString()}";
+
+                var labels = new Dictionary<string, string>
+                {
+                    ["environment"] = randomValue,
+                };
+
+                var result = LabelSelectorTester.Test(labels, labelSelector);
+                Assert.IsTrue(result);
+            }
         }
     }
 }

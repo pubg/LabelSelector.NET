@@ -107,4 +107,52 @@ namespace LabelSelector
                 .All(labelKey => !labelKey.Span.Equals(Key.Span, StringComparison.Ordinal));
         }
     }
+
+    public class EqualExpression : IExpression
+    {
+        public readonly ReadOnlyMemory<char> Key;
+        public readonly ReadOnlyMemory<char> Value;
+
+        public EqualExpression(ReadOnlyMemory<char> key, ReadOnlyMemory<char> value)
+        {
+            Key = key;
+            Value = value;
+        }
+
+        public bool Test(IReadOnlyDictionary<ReadOnlyMemory<char>, ReadOnlyMemory<char>> labels)
+        {
+            var key = labels.Keys.FirstOrDefault(labelKey => labelKey.Span.Equals(Key.Span, StringComparison.Ordinal));
+
+            if (!labels.TryGetValue(key, out var value))
+            {
+                return false;
+            }
+
+            return Value.Span.Equals(value.Span, StringComparison.Ordinal);
+        }
+    }
+
+    public class NotEqualExpression : IExpression
+    {
+        public readonly ReadOnlyMemory<char> Key;
+        public readonly ReadOnlyMemory<char> Value;
+
+        public NotEqualExpression(ReadOnlyMemory<char> key, ReadOnlyMemory<char> value)
+        {
+            Key = key;
+            Value = value;
+        }
+
+        public bool Test(IReadOnlyDictionary<ReadOnlyMemory<char>, ReadOnlyMemory<char>> labels)
+        {
+            var key = labels.Keys.FirstOrDefault(labelKey => labelKey.Span.Equals(Key.Span, StringComparison.Ordinal));
+
+            if (!labels.TryGetValue(key, out var value))
+            {
+                return false;
+            }
+
+            return !Value.Span.Equals(value.Span, StringComparison.Ordinal);
+        }
+    }
 }

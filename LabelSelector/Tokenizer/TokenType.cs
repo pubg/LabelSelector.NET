@@ -6,7 +6,7 @@
         Value, // else
         OpenParentheses, // (
         CloseParentheses, // )
-        EqualEqual, // ==
+        Equal, // =
         ExclamationEqual, // !=
         In, // in
         NotIn, // notIn
