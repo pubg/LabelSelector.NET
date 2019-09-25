@@ -106,7 +106,7 @@ namespace LabelSelectorTest
                 randomValues.Add(randomString);
             }
 
-            var labelSelector = $"environment notin ({string.Join(", ", randomValues)})";
+            var labelSelector = $"environment notin ({string.Join(", ", randomValues)} )";
 
             foreach (var randomValue in randomValues)
             {
@@ -196,6 +196,24 @@ namespace LabelSelectorTest
 
             var result = LabelSelectorTester.Test(labels, labelSelector);
             Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void TestExistsExpression_False_VariousLength()
+        {
+            var labelSelector = "";
+            for (var i = 0; i < 100; i += 1)
+            {
+                labelSelector += "a";
+
+                var labels = new Dictionary<string, string>
+                {
+                    [GenerateRandomString()] = GenerateRandomString(),
+                };
+
+                var result = LabelSelectorTester.Test(labels, labelSelector);
+                Assert.IsFalse(result);
+            }
         }
 
         [TestMethod]
@@ -364,6 +382,22 @@ namespace LabelSelectorTest
                 var result = LabelSelectorTester.Test(labels, labelSelector);
                 Assert.IsTrue(result);
             }
+        }
+
+
+        [TestMethod]
+        public void TestExists_RealData()
+        {
+            var labels = new Dictionary<string, string>
+            {
+                ["shard"] = "na",
+                ["gameVersion"] = "401.0.1.45",
+                ["needCapacity"] = "2",
+                ["mapId"] = "/Game/Maps/Baltic/Baltic_Main",
+            };
+
+            var result = LabelSelectorTester.Test(labels, "mapId=/Game/Maps/Baltic/Baltic_Main");
+            Assert.IsTrue(result);
         }
     }
 }

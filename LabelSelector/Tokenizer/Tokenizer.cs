@@ -37,7 +37,7 @@ namespace LabelSelector
                 head = i + 1;
             }
 
-            if (head < text.Length - 1)
+            if (head < text.Length)
             {
                 yield return text.Slice(head, text.Length - head);
             }
@@ -49,107 +49,192 @@ namespace LabelSelector
             return chunks.SelectMany(ToTokens);
         }
 
-        private static IEnumerable<Token> ToTokens(ReadOnlyMemory<char> chunkedText)
+        internal enum TokenCategory
         {
-            if (chunkedText.Length == 0)
+            None,
+            Coexist,
+            Monopoly,
+            Value,
+        }
+
+        private static bool TryTokenize(
+            ReadOnlyMemory<char> noWhiteSpaceText,
+            TokenCategory lastTokenCategory,
+            out Token token,
+            out TokenCategory tokenCategory,
+            out ReadOnlyMemory<char> nextText)
+        {
+            switch (lastTokenCategory)
             {
-                yield break;
+                case TokenCategory.None:
+                    if (TryTokenizeAsMonopoly(noWhiteSpaceText, out token, out nextText))
+                    {
+                        tokenCategory = TokenCategory.Monopoly;
+                        return true;
+                    }
+                    if (TryTokenizeAsCoexist(noWhiteSpaceText, out token, out nextText))
+                    {
+                        tokenCategory = TokenCategory.Coexist;
+                        return true;
+                    }
+                    if (TryTokenizeAsValue(noWhiteSpaceText, out token, out nextText))
+                    {
+                        tokenCategory = TokenCategory.Value;
+                        return true;
+                    }
+                    break;
+                case TokenCategory.Coexist:
+                    if (TryTokenizeAsMonopoly(noWhiteSpaceText, out token, out nextText))
+                    {
+                        tokenCategory = TokenCategory.Monopoly;
+                        return true;
+                    }
+                    if (TryTokenizeAsValue(noWhiteSpaceText, out token, out nextText))
+                    {
+                        tokenCategory = TokenCategory.Value;
+                        return true;
+                    }
+                    break;
+                case TokenCategory.Monopoly:
+                    if (TryTokenizeAsCoexist(noWhiteSpaceText, out token, out nextText))
+                    {
+                        tokenCategory = TokenCategory.Coexist;
+                        return true;
+                    }
+                    break;
+                case TokenCategory.Value:
+                    if (TryTokenizeAsCoexist(noWhiteSpaceText, out token, out nextText))
+                    {
+                        tokenCategory = TokenCategory.Coexist;
+                        return true;
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(lastTokenCategory), lastTokenCategory, null);
+            }
+
+            tokenCategory = TokenCategory.None;
+            return false;
+        }
+
+        private static bool TryTokenizeAsValue(
+            in ReadOnlyMemory<char> noWhiteSpaceText,
+            out Token token,
+            out ReadOnlyMemory<char> nextText)
+        {
+
+            if (noWhiteSpaceText.Length == 0)
+            {
+                token = default;
+                nextText = default;
+                return false;
+            }
+
+            for (var i = 0; i < noWhiteSpaceText.Length; i += 1)
+            {
+                nextText = noWhiteSpaceText.Slice(i);
+
+                if (TryTokenizeAsCoexist(nextText, out _, out _))
+                {
+                    token = Token.NewToken(TokenType.Value, noWhiteSpaceText.Slice(0, i));
+                    return true;
+                }
+            }
+
+            token = Token.NewToken(TokenType.Value, noWhiteSpaceText);
+            nextText = noWhiteSpaceText.Slice(noWhiteSpaceText.Length);
+            return true;
+        }
+
+        private static bool TryTokenizeAsCoexist(
+            in ReadOnlyMemory<char> noWhiteSpaceText,
+            out Token token,
+            out ReadOnlyMemory<char> nextText)
+        {
+            if (noWhiteSpaceText.Length == 0)
+            {
+                goto fail;
             }
 
             foreach ((TokenType tokenType, string matchString) in CoexistTokenDefinitions)
             {
-                if (chunkedText.Length < matchString.Length)
+                if (noWhiteSpaceText.Length < matchString.Length)
                 {
                     continue;
                 }
 
-                var memory = chunkedText.Slice(0, matchString.Length);
+                var memory = noWhiteSpaceText.Slice(0, matchString.Length);
 
                 if (!memory.Span.Equals(matchString, StringComparison.Ordinal))
                 {
                     continue;
                 }
 
-                yield return Token.NewToken(tokenType, memory);
-
-                foreach (var token in ToTokens(chunkedText.Slice(memory.Length)))
-                {
-                    yield return token;
-                }
-
-                yield break;
+                token = Token.NewToken(tokenType, memory);
+                nextText = noWhiteSpaceText.Slice(matchString.Length);
+                return true;
             }
 
-            List<Token> nextTokens;
-            Token nextFirstToken;
+            fail:
+            token = default;
+            nextText = default;
+            return false;
+        }
+
+        private static bool TryTokenizeAsMonopoly(
+            in ReadOnlyMemory<char> noWhiteSpaceText,
+            out Token token,
+            out ReadOnlyMemory<char> nextText)
+        {
+            if (noWhiteSpaceText.Length == 0)
+            {
+                goto fail;
+            }
 
             foreach ((TokenType tokenType, string matchString) in MonopolyTokenDefinitions)
             {
-                if (chunkedText.Length < matchString.Length)
+                if (noWhiteSpaceText.Length < matchString.Length)
                 {
                     continue;
                 }
 
-                var memory = chunkedText.Slice(0, matchString.Length);
+                var memory = noWhiteSpaceText.Slice(0, matchString.Length);
 
                 if (!memory.Span.Equals(matchString, StringComparison.Ordinal))
                 {
                     continue;
                 }
 
-                var monopolyToken = Token.NewToken(tokenType, memory);
-
-                nextTokens = ToTokens(chunkedText.Slice(memory.Length)).ToList();
-                if (nextTokens.Count != 0
-                    && CoexistTokenDefinitions
-                        .All(coexistTokenDefinition =>
-                            coexistTokenDefinition.tokenType != nextTokens[0].TokenType))
-                {
-                    continue;
-                }
-
-                yield return monopolyToken;
-
-                foreach (var token in nextTokens)
-                {
-                    yield return token;
-                }
-
-                yield break;
+                token = Token.NewToken(tokenType, memory);
+                nextText = noWhiteSpaceText.Slice(matchString.Length);
+                return true;
             }
 
-            nextTokens = ToTokens(chunkedText.Slice(1)).ToList();
-            if (nextTokens.Any())
+            fail:
+            token = default;
+            nextText = default;
+            return false;
+        }
+
+        private static IEnumerable<Token> ToTokens(ReadOnlyMemory<char> chunkedText)
+        {
+            var text = chunkedText;
+            var lastTokenCategory = TokenCategory.None;
+
+            while (text.Length > 0
+                   && TryTokenize(text,
+                       lastTokenCategory,
+                       out var token,
+                       out lastTokenCategory,
+                       out text))
             {
-                nextFirstToken = nextTokens[0];
-                if (nextFirstToken.TokenType == TokenType.Value)
-                {
-                    var mergedValue = chunkedText.Slice(0, nextFirstToken.Value.Length + 1);
-                    var valueToken = Token.NewToken(TokenType.Value, mergedValue);
-
-                    yield return valueToken;
-
-                    foreach (var token in nextTokens.Skip(1))
-                    {
-                        yield return token;
-                    }
-
-                    yield break;
-                }
-                else
-                {
-                    yield return Token.NewToken(TokenType.Value, chunkedText.Slice(0, 1));
-
-                    foreach (var token in nextTokens)
-                    {
-                        yield return token;
-                    }
-
-                    yield break;
-                }
+                yield return token;
             }
 
-            yield return Token.NewToken(TokenType.Value, chunkedText);
+            if (text.Length > 0)
+            {
+                throw new Exception($"text({chunkedText}) has not been fully tokenized");
+            }
         }
     }
 }
