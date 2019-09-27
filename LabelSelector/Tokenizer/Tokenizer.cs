@@ -67,6 +67,7 @@ namespace LabelSelector
             switch (lastTokenCategory)
             {
                 case TokenCategory.None:
+                case TokenCategory.Coexist:
                     if (TryTokenizeAsMonopoly(noWhiteSpaceText, out token, out nextText))
                     {
                         tokenCategory = TokenCategory.Monopoly;
@@ -75,18 +76,6 @@ namespace LabelSelector
                     if (TryTokenizeAsCoexist(noWhiteSpaceText, out token, out nextText))
                     {
                         tokenCategory = TokenCategory.Coexist;
-                        return true;
-                    }
-                    if (TryTokenizeAsValue(noWhiteSpaceText, out token, out nextText))
-                    {
-                        tokenCategory = TokenCategory.Value;
-                        return true;
-                    }
-                    break;
-                case TokenCategory.Coexist:
-                    if (TryTokenizeAsMonopoly(noWhiteSpaceText, out token, out nextText))
-                    {
-                        tokenCategory = TokenCategory.Monopoly;
                         return true;
                     }
                     if (TryTokenizeAsValue(noWhiteSpaceText, out token, out nextText))

@@ -386,7 +386,7 @@ namespace LabelSelectorTest
 
 
         [TestMethod]
-        public void TestExists_RealData()
+        public void TestExists_RealData_Match()
         {
             var labels = new Dictionary<string, string>
             {
@@ -397,6 +397,21 @@ namespace LabelSelectorTest
             };
 
             var result = LabelSelectorTester.Test(labels, "mapId=/Game/Maps/Baltic/Baltic_Main");
+            Assert.IsTrue(result);
+
+        }
+
+        [TestMethod]
+        public void TestExists_RealData_Instance()
+        {
+            var labels = new Dictionary<string, string>
+            {
+                ["gsgId"] = "dev-node:9999",
+                ["publicIp"] = "10.160.3.84",
+                ["region"] = "ap-northeast-2",
+            };
+
+            var result = LabelSelectorTester.Test(labels, "gsgId in (dev-node:9999	, 123), gsgId");
             Assert.IsTrue(result);
         }
     }
